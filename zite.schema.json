@@ -1,0 +1,1235 @@
+{
+  "tables": [
+    {
+      "id": "tkZKD8R31pb",
+      "sdkName": "departments",
+      "name": "Departments",
+      "primaryFieldId": "fqwnM3qzMXM",
+      "fields": [
+        {
+          "id": "fqwnM3qzMXM",
+          "sdkName": "departmentName",
+          "definition": {
+            "name": "Department Name",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "f3NPg7kLg7S",
+          "sdkName": "description",
+          "definition": {
+            "name": "Description",
+            "type": "long_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "f4npwobUTmz",
+          "sdkName": "employees",
+          "definition": {
+            "name": "Employees",
+            "type": "linked_record",
+            "template": {
+              "tableId": "t3BTUggMiVE",
+              "isInverse": true,
+              "allowMultiple": true,
+              "inverseFieldId": "fgro9HJnD9F"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t3BTUggMiVE",
+      "sdkName": "employees",
+      "name": "Employees",
+      "primaryFieldId": "fu14RFigqJe",
+      "fields": [
+        {
+          "id": "fu14RFigqJe",
+          "sdkName": "fullName",
+          "definition": {
+            "name": "Full Name",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fe1gCVTHKK3",
+          "sdkName": "employeeNo",
+          "definition": {
+            "name": "Employee No",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fdXNyvMPy4c",
+          "sdkName": "position",
+          "definition": {
+            "name": "Position",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fgro9HJnD9F",
+          "sdkName": "department",
+          "definition": {
+            "name": "Department",
+            "type": "linked_record",
+            "template": {
+              "tableId": "tkZKD8R31pb",
+              "isInverse": false,
+              "allowMultiple": true,
+              "inverseFieldId": "f4npwobUTmz"
+            }
+          }
+        },
+        {
+          "id": "f4FqJBLcQgg",
+          "sdkName": "dailyRate",
+          "definition": {
+            "name": "Daily Rate",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "fbrAsAg6Trq",
+          "sdkName": "employmentStatus",
+          "definition": {
+            "name": "Employment Status",
+            "type": "single_select",
+            "template": {
+              "options": [
+                {
+                  "value": "hmqS",
+                  "label": "Regular",
+                  "color": "green"
+                },
+                {
+                  "value": "2WoA",
+                  "label": "Probationary",
+                  "color": "yellow"
+                },
+                {
+                  "value": "9uNR",
+                  "label": "Contractual",
+                  "color": "blue"
+                }
+              ],
+              "disableColors": false
+            }
+          }
+        },
+        {
+          "id": "fp8uZ7pF6Ek",
+          "sdkName": "dateHired",
+          "definition": {
+            "name": "Date Hired",
+            "type": "date",
+            "template": {
+              "dateFormat": "local"
+            }
+          }
+        },
+        {
+          "id": "f1AtN9JR5JQ",
+          "sdkName": "tin",
+          "definition": {
+            "name": "TIN",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "f6h1CqPCB11",
+          "sdkName": "sssNo",
+          "definition": {
+            "name": "SSS No",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fwbwWpZo1JE",
+          "sdkName": "philHealthNo",
+          "definition": {
+            "name": "PhilHealth No",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fca7tFuTqHn",
+          "sdkName": "pagIbigNo",
+          "definition": {
+            "name": "Pag-IBIG No",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fu6xWGRBpwm",
+          "sdkName": "leaveCredits",
+          "definition": {
+            "name": "Leave Credits",
+            "type": "number",
+            "template": {
+              "defaultValue": 5,
+              "numberFormat": "local",
+              "decimalPlaces": 1
+            }
+          }
+        },
+        {
+          "id": "ff7kh4BSfmb",
+          "sdkName": "active",
+          "definition": {
+            "name": "Active",
+            "type": "checkbox",
+            "template": {
+              "defaultValue": true
+            }
+          }
+        },
+        {
+          "id": "f1TRtkt3wTv",
+          "sdkName": "attendance",
+          "definition": {
+            "name": "Attendance",
+            "type": "linked_record",
+            "template": {
+              "tableId": "t5613jtwX91",
+              "isInverse": true,
+              "allowMultiple": true,
+              "inverseFieldId": "ftwSdTGavUy"
+            }
+          }
+        },
+        {
+          "id": "fvd6DzT74uk",
+          "sdkName": "leaves",
+          "definition": {
+            "name": "Leaves",
+            "type": "linked_record",
+            "template": {
+              "tableId": "tafTrtj1vkP",
+              "isInverse": true,
+              "allowMultiple": true,
+              "inverseFieldId": "faKsWfUwGsT"
+            }
+          }
+        },
+        {
+          "id": "f7krq8NF1mR",
+          "sdkName": "cashAdvances",
+          "definition": {
+            "name": "Cash Advances",
+            "type": "linked_record",
+            "template": {
+              "tableId": "tcHwjk8hr3q",
+              "isInverse": true,
+              "allowMultiple": true,
+              "inverseFieldId": "fjT7SK2U4AK"
+            }
+          }
+        },
+        {
+          "id": "f3UW7nMpR6a",
+          "sdkName": "payslips",
+          "definition": {
+            "name": "Payslips",
+            "type": "linked_record",
+            "template": {
+              "tableId": "tshNcs9HFx6",
+              "isInverse": true,
+              "allowMultiple": true,
+              "inverseFieldId": "fkGdsEmTXGX"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t5613jtwX91",
+      "sdkName": "attendance",
+      "name": "Attendance",
+      "primaryFieldId": "fm9XJM6YviB",
+      "fields": [
+        {
+          "id": "fm9XJM6YviB",
+          "sdkName": "workDate",
+          "definition": {
+            "name": "Work Date",
+            "type": "date",
+            "template": {
+              "dateFormat": "local"
+            }
+          }
+        },
+        {
+          "id": "ftwSdTGavUy",
+          "sdkName": "employee",
+          "definition": {
+            "name": "Employee",
+            "type": "linked_record",
+            "template": {
+              "tableId": "t3BTUggMiVE",
+              "isInverse": false,
+              "allowMultiple": true,
+              "inverseFieldId": "f1TRtkt3wTv"
+            }
+          }
+        },
+        {
+          "id": "f6V6YwVz9q5",
+          "sdkName": "timeIn",
+          "definition": {
+            "name": "Time In",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "ffUUxQcTgmW",
+          "sdkName": "timeOut",
+          "definition": {
+            "name": "Time Out",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fiehQgS9kRa",
+          "sdkName": "status",
+          "definition": {
+            "name": "Status",
+            "type": "single_select",
+            "template": {
+              "options": [
+                {
+                  "value": "utU6",
+                  "label": "Present",
+                  "color": "green"
+                },
+                {
+                  "value": "jDuf",
+                  "label": "Absent",
+                  "color": "red"
+                },
+                {
+                  "value": "fd2C",
+                  "label": "Paid Leave",
+                  "color": "blue"
+                }
+              ],
+              "disableColors": false
+            }
+          }
+        },
+        {
+          "id": "f7RmqbjYqtU",
+          "sdkName": "dayType",
+          "definition": {
+            "name": "Day Type",
+            "type": "single_select",
+            "template": {
+              "options": [
+                {
+                  "value": "anFu",
+                  "label": "Regular Day",
+                  "color": "gray"
+                },
+                {
+                  "value": "hNvJ",
+                  "label": "Regular Holiday",
+                  "color": "red"
+                },
+                {
+                  "value": "uPpH",
+                  "label": "Special Non-Working",
+                  "color": "orange"
+                },
+                {
+                  "value": "bD4x",
+                  "label": "Rest Day",
+                  "color": "purple"
+                }
+              ],
+              "disableColors": false
+            }
+          }
+        },
+        {
+          "id": "fjbU1J4KtfR",
+          "sdkName": "lateMinutes",
+          "definition": {
+            "name": "Late Minutes",
+            "type": "number",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 0
+            }
+          }
+        },
+        {
+          "id": "f8Lr4PMz9wN",
+          "sdkName": "overtimeHours",
+          "definition": {
+            "name": "Overtime Hours",
+            "type": "number",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2
+            }
+          }
+        },
+        {
+          "id": "fngCfZWMa1S",
+          "sdkName": "nightDiffHours",
+          "definition": {
+            "name": "Night Diff Hours",
+            "type": "number",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2
+            }
+          }
+        },
+        {
+          "id": "f8JDEh6N7E7",
+          "sdkName": "remarks",
+          "definition": {
+            "name": "Remarks",
+            "type": "long_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "f2sUnx1GeKb",
+          "sdkName": "overtimePayMode",
+          "definition": {
+            "name": "Overtime Pay Mode",
+            "type": "single_select",
+            "template": {
+              "options": [
+                {
+                  "value": "tApV",
+                  "label": "Hours",
+                  "color": "purple"
+                },
+                {
+                  "value": "rQo6",
+                  "label": "Fixed Amount",
+                  "color": "orange"
+                }
+              ],
+              "disableColors": false
+            }
+          }
+        },
+        {
+          "id": "fqtWAZrLFEk",
+          "sdkName": "overtimeAmount",
+          "definition": {
+            "name": "Overtime Amount",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "fuFpHVPzAY8",
+          "sdkName": "otherBenefit",
+          "definition": {
+            "name": "Other Benefit",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "tafTrtj1vkP",
+      "sdkName": "leaves",
+      "name": "Leaves",
+      "primaryFieldId": "fhK4kXXcqRg",
+      "fields": [
+        {
+          "id": "fhK4kXXcqRg",
+          "sdkName": "leaveReason",
+          "definition": {
+            "name": "Leave Reason",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "faKsWfUwGsT",
+          "sdkName": "employee",
+          "definition": {
+            "name": "Employee",
+            "type": "linked_record",
+            "template": {
+              "tableId": "t3BTUggMiVE",
+              "isInverse": false,
+              "allowMultiple": true,
+              "inverseFieldId": "fvd6DzT74uk"
+            }
+          }
+        },
+        {
+          "id": "fx5QZy4BNpu",
+          "sdkName": "leaveType",
+          "definition": {
+            "name": "Leave Type",
+            "type": "single_select",
+            "template": {
+              "options": [
+                {
+                  "value": "48fn",
+                  "label": "Vacation Leave",
+                  "color": "blue"
+                },
+                {
+                  "value": "gjfc",
+                  "label": "Sick Leave",
+                  "color": "red"
+                },
+                {
+                  "value": "r9zX",
+                  "label": "Maternity/Paternity",
+                  "color": "pink"
+                },
+                {
+                  "value": "x6q3",
+                  "label": "Leave Without Pay",
+                  "color": "gray"
+                }
+              ],
+              "disableColors": false
+            }
+          }
+        },
+        {
+          "id": "foSsKGfv2Wb",
+          "sdkName": "startDate",
+          "definition": {
+            "name": "Start Date",
+            "type": "date",
+            "template": {
+              "dateFormat": "local"
+            }
+          }
+        },
+        {
+          "id": "fmZXgYj729F",
+          "sdkName": "endDate",
+          "definition": {
+            "name": "End Date",
+            "type": "date",
+            "template": {
+              "dateFormat": "local"
+            }
+          }
+        },
+        {
+          "id": "ffRSyFhS34g",
+          "sdkName": "days",
+          "definition": {
+            "name": "Days",
+            "type": "number",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 1
+            }
+          }
+        },
+        {
+          "id": "fm5nCUKJGEt",
+          "sdkName": "status",
+          "definition": {
+            "name": "Status",
+            "type": "single_select",
+            "template": {
+              "options": [
+                {
+                  "value": "tCoo",
+                  "label": "Pending",
+                  "color": "yellow"
+                },
+                {
+                  "value": "mW9R",
+                  "label": "Approved",
+                  "color": "green"
+                },
+                {
+                  "value": "o5Pp",
+                  "label": "Rejected",
+                  "color": "red"
+                }
+              ],
+              "disableColors": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "tcHwjk8hr3q",
+      "sdkName": "cashAdvances",
+      "name": "Cash Advances",
+      "primaryFieldId": "ff6DzjzGnJe",
+      "fields": [
+        {
+          "id": "ff6DzjzGnJe",
+          "sdkName": "description",
+          "definition": {
+            "name": "Description",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fjT7SK2U4AK",
+          "sdkName": "employee",
+          "definition": {
+            "name": "Employee",
+            "type": "linked_record",
+            "template": {
+              "tableId": "t3BTUggMiVE",
+              "isInverse": false,
+              "allowMultiple": true,
+              "inverseFieldId": "f7krq8NF1mR"
+            }
+          }
+        },
+        {
+          "id": "f2xBWaoA9T7",
+          "sdkName": "type",
+          "definition": {
+            "name": "Type",
+            "type": "single_select",
+            "template": {
+              "options": [
+                {
+                  "value": "nQa6",
+                  "label": "Cash Advance",
+                  "color": "orange"
+                },
+                {
+                  "value": "xmVb",
+                  "label": "SSS Loan",
+                  "color": "blue"
+                },
+                {
+                  "value": "byJE",
+                  "label": "Pag-IBIG Loan",
+                  "color": "green"
+                },
+                {
+                  "value": "14CG",
+                  "label": "Company Loan",
+                  "color": "gray"
+                }
+              ],
+              "disableColors": false
+            }
+          }
+        },
+        {
+          "id": "fwjLPCmQ2xX",
+          "sdkName": "amount",
+          "definition": {
+            "name": "Amount",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "ffwxHz9BzzV",
+          "sdkName": "deductionPerCutoff",
+          "definition": {
+            "name": "Deduction Per Cutoff",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "ftGi82fPW22",
+          "sdkName": "balance",
+          "definition": {
+            "name": "Balance",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "frKMXWZ22WT",
+          "sdkName": "dateGranted",
+          "definition": {
+            "name": "Date Granted",
+            "type": "date",
+            "template": {
+              "dateFormat": "local"
+            }
+          }
+        },
+        {
+          "id": "fcF4JBNB1yx",
+          "sdkName": "status",
+          "definition": {
+            "name": "Status",
+            "type": "single_select",
+            "template": {
+              "options": [
+                {
+                  "value": "7Hqc",
+                  "label": "Active",
+                  "color": "orange"
+                },
+                {
+                  "value": "kC6x",
+                  "label": "Paid",
+                  "color": "green"
+                }
+              ],
+              "disableColors": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "tshNcs9HFx6",
+      "sdkName": "payslips",
+      "name": "Payslips",
+      "primaryFieldId": "f6pXBDTBjb2",
+      "fields": [
+        {
+          "id": "f6pXBDTBjb2",
+          "sdkName": "periodLabel",
+          "definition": {
+            "name": "Period Label",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fkGdsEmTXGX",
+          "sdkName": "employee",
+          "definition": {
+            "name": "Employee",
+            "type": "linked_record",
+            "template": {
+              "tableId": "t3BTUggMiVE",
+              "isInverse": false,
+              "allowMultiple": true,
+              "inverseFieldId": "f3UW7nMpR6a"
+            }
+          }
+        },
+        {
+          "id": "fbDYqkM2Psa",
+          "sdkName": "periodStart",
+          "definition": {
+            "name": "Period Start",
+            "type": "date",
+            "template": {
+              "dateFormat": "local"
+            }
+          }
+        },
+        {
+          "id": "fwxcntzTsNh",
+          "sdkName": "periodEnd",
+          "definition": {
+            "name": "Period End",
+            "type": "date",
+            "template": {
+              "dateFormat": "local"
+            }
+          }
+        },
+        {
+          "id": "fbkUvvJqfiL",
+          "sdkName": "daysWorked",
+          "definition": {
+            "name": "Days Worked",
+            "type": "number",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 1
+            }
+          }
+        },
+        {
+          "id": "fb1oWypGBnA",
+          "sdkName": "basicPay",
+          "definition": {
+            "name": "Basic Pay",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "ftm8w2P96EE",
+          "sdkName": "overtimePay",
+          "definition": {
+            "name": "Overtime Pay",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "foyBpvFUEPW",
+          "sdkName": "nightDiffPay",
+          "definition": {
+            "name": "Night Diff Pay",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "fadPrpfPWp4",
+          "sdkName": "holidayPay",
+          "definition": {
+            "name": "Holiday Pay",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "fpofKb9Y4Yx",
+          "sdkName": "lateDeduction",
+          "definition": {
+            "name": "Late Deduction",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "fhzrfNSrkvp",
+          "sdkName": "grossPay",
+          "definition": {
+            "name": "Gross Pay",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "f6cduny3tFN",
+          "sdkName": "sss",
+          "definition": {
+            "name": "SSS",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "f2MSCb5kjbR",
+          "sdkName": "philHealth",
+          "definition": {
+            "name": "PhilHealth",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "f5heu7sNuGa",
+          "sdkName": "pagIbig",
+          "definition": {
+            "name": "Pag-IBIG",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "fwqA33D9hma",
+          "sdkName": "withholdingTax",
+          "definition": {
+            "name": "Withholding Tax",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "fmJoBXfoCVK",
+          "sdkName": "loanDeductions",
+          "definition": {
+            "name": "Loan Deductions",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "f5Bv25weH2c",
+          "sdkName": "netPay",
+          "definition": {
+            "name": "Net Pay",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "fn7oaFr8emJ",
+          "sdkName": "status",
+          "definition": {
+            "name": "Status",
+            "type": "single_select",
+            "template": {
+              "options": [
+                {
+                  "value": "cSwt",
+                  "label": "Draft",
+                  "color": "yellow"
+                },
+                {
+                  "value": "7HUN",
+                  "label": "Released",
+                  "color": "green"
+                }
+              ],
+              "disableColors": false
+            }
+          }
+        },
+        {
+          "id": "fpZExrtNve9",
+          "sdkName": "cashAdvanceDeduction",
+          "definition": {
+            "name": "Cash Advance Deduction",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "ftLWKG9hr9g",
+          "sdkName": "deductionDetails",
+          "definition": {
+            "name": "Deduction Details",
+            "type": "long_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fqrfsbJkmxH",
+          "sdkName": "sinkingContributionDeduction",
+          "definition": {
+            "name": "Sinking Contribution Deduction",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        },
+        {
+          "id": "ffaMjCbAvHx",
+          "sdkName": "otherBenefits",
+          "definition": {
+            "name": "Other Benefits",
+            "type": "currency",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 2,
+              "currencySymbol": "₱"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "tfkz6bYd33T",
+      "sdkName": "userRoles",
+      "name": "User Roles",
+      "primaryFieldId": "fdf8AhbDkhp",
+      "fields": [
+        {
+          "id": "fdf8AhbDkhp",
+          "sdkName": "label",
+          "definition": {
+            "name": "Label",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fdijZG4qTQ3",
+          "sdkName": "user",
+          "definition": {
+            "name": "User",
+            "type": "user",
+            "template": {
+              "internalOnly": false,
+              "allowMultiple": false,
+              "deleteRowWhenUserDeleted": true
+            }
+          }
+        },
+        {
+          "id": "foKR9YBgBzd",
+          "sdkName": "role",
+          "definition": {
+            "name": "Role",
+            "type": "single_select",
+            "template": {
+              "options": [
+                {
+                  "value": "iaa8",
+                  "label": "Admin",
+                  "color": "green"
+                },
+                {
+                  "value": "2S1P",
+                  "label": "Viewer",
+                  "color": "gray"
+                },
+                {
+                  "value": "rwMN",
+                  "label": "Editor|attendance,cashAdvances",
+                  "color": "purple"
+                },
+                {
+                  "value": "4vpf",
+                  "label": "Editor|cashAdvances",
+                  "color": "orange"
+                },
+                {
+                  "value": "iesR",
+                  "label": "Editor|",
+                  "color": "blue"
+                },
+                {
+                  "value": "8DHw",
+                  "label": "Editor|attendance",
+                  "color": "red"
+                }
+              ],
+              "disableColors": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "tc7atEEpZZ1",
+      "sdkName": "appInvites",
+      "name": "App Invites",
+      "primaryFieldId": "fnjiMaAv1u6",
+      "fields": [
+        {
+          "id": "fnjiMaAv1u6",
+          "sdkName": "email",
+          "definition": {
+            "name": "Email",
+            "type": "email",
+            "template": {}
+          }
+        },
+        {
+          "id": "fj87KdNURvV",
+          "sdkName": "role",
+          "definition": {
+            "name": "Role",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fq9psCVQVDf",
+          "sdkName": "invitedBy",
+          "definition": {
+            "name": "Invited By",
+            "type": "user",
+            "template": {
+              "internalOnly": false,
+              "allowMultiple": false,
+              "deleteRowWhenUserDeleted": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "tuHwU1ARRRx",
+      "sdkName": "rateLimitBuckets",
+      "name": "Rate Limit Buckets",
+      "primaryFieldId": "fiJ6C6SXtMe",
+      "fields": [
+        {
+          "id": "fiJ6C6SXtMe",
+          "sdkName": "bucketKey",
+          "definition": {
+            "name": "Bucket Key",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fwhwUMcsVKD",
+          "sdkName": "requestCount",
+          "definition": {
+            "name": "Request Count",
+            "type": "number",
+            "template": {
+              "numberFormat": "local",
+              "decimalPlaces": 0
+            }
+          }
+        },
+        {
+          "id": "ftEQ8TiVsAy",
+          "sdkName": "windowStart",
+          "definition": {
+            "name": "Window Start",
+            "type": "datetime",
+            "template": {
+              "timezone": "",
+              "dateFormat": "local",
+              "timeFormat": "12h",
+              "displayTimeZone": false
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "te4ExyjRwwL",
+      "sdkName": "failedActions",
+      "name": "Failed Actions",
+      "primaryFieldId": "ftF5xfQBiqY",
+      "fields": [
+        {
+          "id": "ftF5xfQBiqY",
+          "sdkName": "summary",
+          "definition": {
+            "name": "Summary",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fbyjfchzp3v",
+          "sdkName": "errorCode",
+          "definition": {
+            "name": "Error Code",
+            "type": "single_line_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fgrEb5kPJSC",
+          "sdkName": "userEmail",
+          "definition": {
+            "name": "User Email",
+            "type": "email",
+            "template": {}
+          }
+        },
+        {
+          "id": "f8g2zxrM8om",
+          "sdkName": "details",
+          "definition": {
+            "name": "Details",
+            "type": "long_text",
+            "template": {}
+          }
+        },
+        {
+          "id": "fdcJchay74e",
+          "sdkName": "occurredAt",
+          "definition": {
+            "name": "Occurred At",
+            "type": "created_at",
+            "template": {
+              "timezone": "",
+              "dateFormat": "local",
+              "timeFormat": "12h",
+              "displayTimeZone": false
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,23 +1,12 @@
 {
-  "id": "cfalkekpn2",
-  "accessMode": "external",
-  "envVars": {
-    "ZITE_API_KEY": {
-      "description": "Supabase secret key (starts with sb_secret_…), or the legacy service_role key"
-    },
-    "ZITE_SUPABASE_URL": {}
+  "project": {
+    "name": "Philippine Attendance Payroll",
+    "basePublicIdentifier": "45511c654b7b6b57"
   },
-  "authentication": {
-    "signup": "disabled",
-    "authenticationMethods": {
-      "magicLink": true,
-      "googleSignIn": true,
-      "sso": false
+  "integrations": {
+    "github": {
+      "type": "github",
+      "connectionId": "svc_561264"
     }
-  },
-  "pwaSettings": {
-    "enabled": true,
-    "title": "Jheff Attendance & Payroll",
-    "backgroundColor": "#ce2c2c"
   }
 }
