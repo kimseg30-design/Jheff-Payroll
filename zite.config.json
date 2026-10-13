@@ -1,0 +1,23 @@
+{
+  "id": "cfalkekpn2",
+  "accessMode": "external",
+  "envVars": {
+    "ZITE_API_KEY": {
+      "description": "Supabase secret key (starts with sb_secret_…), or the legacy service_role key"
+    },
+    "ZITE_SUPABASE_URL": {}
+  },
+  "authentication": {
+    "signup": "disabled",
+    "authenticationMethods": {
+      "magicLink": true,
+      "googleSignIn": true,
+      "sso": false
+    }
+  },
+  "pwaSettings": {
+    "enabled": true,
+    "title": "Jheff Attendance & Payroll",
+    "backgroundColor": "#ce2c2c"
+  }
+}
