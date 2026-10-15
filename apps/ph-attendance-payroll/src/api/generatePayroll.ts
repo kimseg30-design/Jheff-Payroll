@@ -6,6 +6,7 @@ import { db } from '../lib/supabase';
 import { sf } from '../lib/sf';
 import { calcLoan } from '../lib/loanCalc';
 import { computePayslip } from '../lib/payrollCalc';
+import { withLog } from '../lib/guard';
 
 const first = (v: unknown) => (Array.isArray(v) ? v[0] : v) as string | undefined;
 const r2 = (n: number) => Math.round(n * 100) / 100;
@@ -28,7 +29,7 @@ export default createEndpoint({
   inputSchema: z.object({ periodStart: z.string(), periodEnd: z.string(), periodLabel: z.string(), frequency: z.enum(['semi-monthly', 'weekly']).default('semi-monthly'),
     benefits: z.object({ sss: z.boolean(), philHealth: z.boolean(), pagIbig: z.boolean(), tax: z.boolean() }).optional() }),
   outputSchema: z.object({ created: z.number(), skipped: z.number() }),
-  execute: async ({ input, context }) => {
+  execute: withLog('generatePayroll', async ({ input, context }) => {
     await requireAdmin(context.user);
     const [emps, att, advances, existing, sfLoans, sfPayments, sfMembers] = await Promise.all([
       db.employees.findAll({ filters: { active: true }, limit: 2000 }),
@@ -59,7 +60,13 @@ export default createEndpoint({
       // Draft generation previews deductions only. Ledgers update only when a payslip is released.
       let ca = 0, loan = 0, sinkingContribution = 0;
       const details: { id: string; amount: number; source?: string; label?: string; paidOn?: string; periodStart?: string; periodEnd?: string }[] = [];
-      for (const a of advances.records.filter((a) => first(a.employee) === e.id)) {
+      for (const a of advances.records.filter((a) => {
+        if (first(a.employee) !== e.id) return false;
+        // Only deduct advances granted on or before this payroll coverage end date.
+        // Example: a Sep 14 advance must not be deducted from the Sep 7–13 payroll.
+        const grantedDate = String(a.dateGranted ?? '').slice(0, 10);
+        return !grantedDate || grantedDate <= input.periodEnd;
+      })) {
         const d = Math.min(Number(a.deductionPerCutoff) || 0, Number(a.balance) || 0);
         if (d <= 0) continue;
         if (a.type === 'Cash Advance') ca += d; else loan += d;
@@ -124,5 +131,5 @@ export default createEndpoint({
       await db.payslips.bulkCreate({ records: records.slice(i, i + 100) as PayslipsRecordInput[] });
     }
     return { created: records.length, skipped };
-  },
+  }),
 });

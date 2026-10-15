@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { createEndpoint } from 'zitejs/backend';
 import { requireAdmin } from '../lib/roles';
 import { sf, Row } from '../lib/sf';
+import { withLog } from '../lib/guard';
 
 type Target = 'loans' | 'contributions' | 'members' | 'all';
 const idOf = (row: Row) => String(row.id);
@@ -12,7 +13,7 @@ export default createEndpoint({
   description: 'Admin-only deletion of selected Sinking Fund data with dependency cleanup and audit logging. Settings and audit history are preserved.',
   inputSchema: z.object({ target: z.enum(['loans', 'contributions', 'members', 'all']), confirmation: z.literal('DELETE') }),
   outputSchema: z.object({ success: z.boolean(), deletedCounts: z.record(z.number()), deleted: z.array(z.string()) }),
-  execute: async ({ input, context }) => {
+  execute: withLog('sfClearData', async ({ input, context }) => {
     await requireAdmin(context.user);
     const target: Target = input.target;
     const counts: Record<string, number> = {};
@@ -53,5 +54,5 @@ export default createEndpoint({
     } else if (target === 'all') await removeRows('members', members);
     await sf.audit('Bulk data deletion', 'data', target, 'Admin deleted Sinking Fund scope: ' + target + '. Counts: ' + JSON.stringify(counts) + '. Settings and audit history were preserved.', context.user.email);
     return { success: true, deletedCounts: counts, deleted: removed };
-  },
+  }),
 });

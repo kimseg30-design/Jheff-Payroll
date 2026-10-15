@@ -1,7 +1,7 @@
 import CheckingAccess from './CheckingAccess';
 import { useState } from 'react';
 import { Navigate, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Building2, ClipboardList, FilePlus2, PiggyBank, Settings, UserRound, Coins, BarChart3, CalendarClock, ChevronsLeft, ChevronsRight, HandCoins, Landmark, LayoutDashboard, Menu, Plane, ShieldCheck, Users, Wallet, Scale } from 'lucide-react';
+import { Building2, ClipboardList, FilePlus2, FileSpreadsheet, PiggyBank, Settings, UserRound, Coins, BarChart3, CalendarClock, ChevronsLeft, ChevronsRight, HandCoins, Landmark, LayoutDashboard, Menu, Plane, ShieldCheck, Users, Wallet, Scale } from 'lucide-react';
 import { Button } from '@project/components/ui/button';
 import { Sheet, SheetContent } from '@project/components/ui/sheet';
 import { cn } from '@project/components/lib/utils';
@@ -13,6 +13,7 @@ const NAV = [
   { to: '/', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/attendance', label: 'Attendance', icon: CalendarClock },
   { to: '/payroll', label: 'Payroll', icon: Wallet },
+  { to: '/reports', label: 'Reports', icon: FileSpreadsheet },
   { to: '/employees', label: 'Employees', icon: Users },
   { to: '/leaves', label: 'Leaves', icon: Plane },
   { to: '/advances', label: 'Cash Advances', icon: HandCoins },

@@ -394,6 +394,7 @@ export type FailedActionsRecordType = {
   details?: string;
   /** Read-only. "Occurred At". Auto-set when record was created (ISO 8601) */
   occurredAt?: string;
+  endpoint?: string;
 };
 
 /** What you may write when creating or updating a record in the "Failed Actions" table. */
@@ -402,6 +403,7 @@ export type FailedActionsRecordInput = {
   errorCode: string | null;
   userEmail: string | null;
   details: string | null;
+  endpoint: string | null;
 };
 
 export interface ZiteAuthUser {

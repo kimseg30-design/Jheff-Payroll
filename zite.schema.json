@@ -1228,6 +1228,15 @@
               "displayTimeZone": false
             }
           }
+        },
+        {
+          "id": "fegrWy1a8xx",
+          "sdkName": "endpoint",
+          "definition": {
+            "name": "Endpoint",
+            "type": "single_line_text",
+            "template": {}
+          }
         }
       ]
     }

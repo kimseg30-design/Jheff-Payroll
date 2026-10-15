@@ -113,6 +113,7 @@ declare global {
     interface ProcessEnv {
       "ZITE_APP_URL": string;
       "ZITE_API_KEY": string;
+      "ZITE_SUPABASE_ANON_KEY": string;
       "ZITE_SUPABASE_URL": string;
     }
   }

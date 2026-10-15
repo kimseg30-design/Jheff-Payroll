@@ -3,6 +3,7 @@ import { createEndpoint } from 'zitejs/backend';
 import { requireTableAccess } from '../lib/roles';
 import { TABLES, tableClient } from '../lib/tables';
 import { syncLeaveCredits } from '../lib/leaveCredits';
+import { withLog } from '../lib/guard';
 
 export default createEndpoint({
   authenticated: true,
@@ -13,7 +14,7 @@ export default createEndpoint({
     record: z.record(z.any()).refine((value) => Object.keys(value).length <= 50 && JSON.stringify(value).length <= 50_000, { message: 'Record payload is too large.' }),
   }),
   outputSchema: z.object({ id: z.string() }),
-  execute: async ({ input, context }) => {
+  execute: withLog('saveRecord', async ({ input, context }) => {
     await requireTableAccess(context.user, input.table, 'write');
     const client = tableClient(input.table);
     if (input.id) {
@@ -25,5 +26,5 @@ export default createEndpoint({
     const created = await client.create({ record: input.record });
     await syncLeaveCredits(input.table, undefined, input.record);
     return { id: created.id };
-  },
+  }),
 });

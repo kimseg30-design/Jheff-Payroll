@@ -27,13 +27,14 @@ export default function AttendanceBulkActions({ rows, clear }: { rows: Rec[]; cl
     } finally { setBusy(false); }
   };
   const mark = (status: string) => run(
-    (r) => saveRecord({ table: 'attendance', id: r.id, record: { status, ...(status !== 'Present' ? { lateMinutes: 0, overtimeHours: 0, nightDiffHours: 0 } : {}) } }),
+    (r) => saveRecord({ table: 'attendance', id: r.id, record: { status, ...(!['Present', 'Halfday'].includes(status) ? { lateMinutes: 0, overtimeHours: 0, nightDiffHours: 0 } : {}) } }),
     `Marked ${rows.length} as ${status}`,
   );
 
   return (
     <>
       <Button size="sm" variant="outline" className="h-8" disabled={busy} onClick={() => mark('Present')}><CalendarCheck className="mr-1.5 h-3.5 w-3.5" />Present</Button>
+      <Button size="sm" variant="outline" className="h-8" disabled={busy} onClick={() => mark('Halfday')}><CalendarCheck className="mr-1.5 h-3.5 w-3.5" />Halfday</Button>
       <Button size="sm" variant="outline" className="h-8" disabled={busy} onClick={() => mark('Absent')}><CalendarX className="mr-1.5 h-3.5 w-3.5" />Absent</Button>
       <Button size="sm" variant="outline" className="h-8" disabled={busy} onClick={() => mark('Paid Leave')}><Plane className="mr-1.5 h-3.5 w-3.5" />Paid Leave</Button>
       <Button size="sm" variant="outline" className="h-8 text-destructive" disabled={busy} onClick={() => setConfirm(true)}><Trash2 className="mr-1.5 h-3.5 w-3.5" />Delete</Button>

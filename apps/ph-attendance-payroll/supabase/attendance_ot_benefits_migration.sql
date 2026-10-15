@@ -9,6 +9,12 @@ alter table public.attendance
   add column if not exists overtime_amount numeric(12,2) not null default 0,
   add column if not exists other_benefit numeric(12,2) not null default 0;
 
+-- Keep the database status constraint aligned with the Halfday option in the app.
+-- Existing attendance rows are preserved; only the accepted status values change.
+alter table public.attendance drop constraint if exists attendance_status_check;
+alter table public.attendance add constraint attendance_status_check
+  check (status in ('Present','Halfday','Absent','Paid Leave'));
+
 -- Validate supported OT modes and non-negative peso amounts.
 do $$
 begin

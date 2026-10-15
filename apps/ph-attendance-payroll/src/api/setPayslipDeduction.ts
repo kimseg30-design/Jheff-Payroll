@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { createEndpoint, ZiteError } from 'zitejs/backend';
 import { requireAdmin } from '../lib/roles';
 import { db } from '../lib/supabase';
+import { withLog } from '../lib/guard';
 
 const r2 = (n: number) => Math.round(n * 100) / 100;
 type Detail = { id: string; amount: number; source?: string; skipped?: boolean; label?: string };
@@ -11,7 +12,7 @@ export default createEndpoint({
   description: 'Includes or skips a loan / cash advance deduction on a draft payslip',
   inputSchema: z.object({ payslipId: z.string(), detailId: z.string(), source: z.string().optional(), include: z.boolean() }),
   outputSchema: z.object({ slip: z.record(z.any()) }),
-  execute: async ({ input, context }) => {
+  execute: withLog('setPayslipDeduction', async ({ input, context }) => {
     await requireAdmin(context.user);
     const slip = await db.payslips.findOne({ id: input.payslipId });
     if (!slip) throw new ZiteError({ code: 'NOT_FOUND', message: 'Payslip not found', userFacingMessage: 'Payslip not found.' });
@@ -39,5 +40,5 @@ export default createEndpoint({
     };
     await db.payslips.update({ id: slip.id, record });
     return { slip: { ...slip, ...record } };
-  },
+  }),
 });

@@ -9,7 +9,7 @@ const TONES: Record<string, string> = {
 };
 
 const MAP: Record<string, keyof typeof TONES> = {
-  Present: 'success', Employed: 'success', Approved: 'success', Released: 'success', Paid: 'success', Regular: 'success',
+  Present: 'success', Halfday: 'info', Employed: 'success', Approved: 'success', Released: 'success', Paid: 'success', Regular: 'success',
   Pending: 'warning', Draft: 'warning', Probationary: 'warning', Active: 'warning',
   'Special Non-Working': 'warning', 'Cash Advance': 'warning',
   Absent: 'danger', Rejected: 'danger', 'Regular Holiday': 'danger', 'Sick Leave': 'danger',

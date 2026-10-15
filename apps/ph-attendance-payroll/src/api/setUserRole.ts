@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { createEndpoint, ZiteError } from 'zitejs/backend';
 import { zite } from 'zitejs/db';
 import { requireAdmin } from '../lib/roles';
+import { withLog } from '../lib/guard';
 
 const permissionSchema = z.enum(['attendance', 'cashAdvances']);
 
@@ -15,7 +16,7 @@ export default createEndpoint({
     permissions: z.array(permissionSchema).optional(),
   }),
   outputSchema: z.object({ success: z.boolean() }),
-  execute: async ({ input, context }) => {
+  execute: withLog('setUserRole', async ({ input, context }) => {
     await requireAdmin(context.user);
     if (input.role !== 'Admin') {
       const admins = await zite.userRoles.findAll({ filters: { role: 'Admin' }, limit: 2 });
@@ -32,5 +33,5 @@ export default createEndpoint({
       await zite.userRoles.bulkCreate({ records: [{ label: input.email, user: input.userId, role: storedRole }], matchOn: ['user'] });
     }
     return { success: true };
-  },
+  }),
 });

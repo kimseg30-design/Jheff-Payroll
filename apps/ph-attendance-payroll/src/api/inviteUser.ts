@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { createEndpoint, ZiteError } from 'zitejs/backend';
 import { zite } from 'zitejs/db';
 import { requireAdmin } from '../lib/roles';
+import { withLog } from '../lib/guard';
 
 export default createEndpoint({
   authenticated: true,
@@ -12,7 +13,7 @@ export default createEndpoint({
     permissions: z.array(z.enum(['attendance', 'cashAdvances'])).optional(),
   }),
   outputSchema: z.object({ success: z.boolean() }),
-  execute: async ({ input, context }) => {
+  execute: withLog('inviteUser', async ({ input, context }) => {
     await requireAdmin(context.user);
     const email = input.email.trim().toLowerCase();
     if (!z.string().email().safeParse(email).success) {
@@ -33,5 +34,5 @@ export default createEndpoint({
     }
     await zite.appInvites.bulkCreate({ records: [{ email, role, invitedBy: context.user.id }], matchOn: ['email'] });
     return { success: true };
-  },
+  }),
 });

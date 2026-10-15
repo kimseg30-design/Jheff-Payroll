@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { createEndpoint } from 'zitejs/backend';
 import { zite } from 'zitejs/db';
 import { requireAdmin } from '../lib/roles';
+import { withLog } from '../lib/guard';
 
 const check = z.object({ status: z.enum(['ok', 'warning', 'error']), message: z.string() });
 
@@ -12,9 +13,10 @@ export default createEndpoint({
   outputSchema: z.object({
     database: check,
     security: check,
-    failures: z.array(z.object({ id: z.string(), summary: z.string(), errorCode: z.string(), userEmail: z.string(), details: z.string(), occurredAt: z.string() })),
+    failures: z.array(z.object({ id: z.string(), summary: z.string(), errorCode: z.string(), userEmail: z.string(), details: z.string(), endpoint: z.string(), occurredAt: z.string() })),
+    failuresLast24h: z.number(),
   }),
-  execute: async ({ context }) => {
+  execute: withLog('getSystemHealth', async ({ context }) => {
     await requireAdmin(context.user, 'read');
     const base = new URL(process.env.ZITE_SUPABASE_URL).origin;
     const key = process.env.ZITE_API_KEY;
@@ -37,25 +39,37 @@ export default createEndpoint({
     } else {
       const tables = ['employees', 'payslips', 'sf_loans', 'sf_payments'];
       const exposed: string[] = [];
+      const inconclusive: string[] = [];
       for (const t of tables) {
-        const res = await fetch(`${base}/rest/v1/${t}?select=id&limit=1`, { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } });
-        if (res.ok) {
-          const rows = await res.json();
-          if (Array.isArray(rows) && rows.length) exposed.push(t);
+        try {
+          const res = await fetch(`${base}/rest/v1/${t}?select=id&limit=1`, { headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` } });
+          // Any successful response proves the public role can reach the table, even if it is empty.
+          if (res.ok) {
+            exposed.push(t);
+          } else {
+            const body = await res.text();
+            const invalidKey = /invalid api key|invalid jwt|jwt expired|no api key|api key is required/i.test(body);
+            if (invalidKey || (res.status !== 401 && res.status !== 403)) inconclusive.push(`${t} (${res.status})`);
+          }
+        } catch {
+          inconclusive.push(`${t} (unreachable)`);
         }
       }
       security = exposed.length
         ? { status: 'error', message: `Public access is NOT blocked for: ${exposed.join(', ')}. Run security_hardening.sql in Supabase.` }
-        : { status: 'ok', message: 'Public (anon) access is denied — security hardening is in place.' };
+        : inconclusive.length
+          ? { status: 'warning', message: `Could not verify public access for: ${inconclusive.join(', ')}. Review Supabase permissions manually.` }
+          : { status: 'ok', message: 'Public (anon) access is denied — security hardening is in place.' };
     }
 
-    const { rows } = await zite.sql({
-      query: 'SELECT "id", "summary", "errorCode", "userEmail", "details", "occurredAt" FROM "FailedActions" ORDER BY "occurredAt" DESC LIMIT 10',
-    });
+    const [{ rows }, countRes] = await Promise.all([
+      zite.sql({ query: 'SELECT "id", "summary", "errorCode", "userEmail", "details", "endpoint", "occurredAt" FROM "FailedActions" ORDER BY "occurredAt" DESC LIMIT 10' }),
+      zite.sql({ query: `SELECT COUNT(*)::int AS "n" FROM "FailedActions" WHERE "occurredAt" >= NOW() - INTERVAL '24 hours'` }),
+    ]);
     const failures = rows.map((r) => ({
       id: String(r.id), summary: String(r.summary ?? ''), errorCode: String(r.errorCode ?? ''),
-      userEmail: String(r.userEmail ?? ''), details: String(r.details ?? ''), occurredAt: String(r.occurredAt ?? ''),
+      userEmail: String(r.userEmail ?? ''), details: String(r.details ?? ''), endpoint: String(r.endpoint ?? ''), occurredAt: String(r.occurredAt ?? ''),
     }));
-    return { database, security, failures };
-  },
+    return { database, security, failures, failuresLast24h: Number(countRes.rows[0]?.n ?? 0) };
+  }),
 });

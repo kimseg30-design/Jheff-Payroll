@@ -5,12 +5,34 @@ export type RequestKind = 'read' | 'write';
 const LIMITS: Record<RequestKind, number> = { read: 60, write: 20 };
 
 /** Records a failed or blocked action so admins can review it under System health. Never throws. */
-export async function logFailure(summary: string, errorCode: string, userEmail?: string, details?: string) {
+export async function logFailure(summary: string, errorCode: string, userEmail?: string, details?: string, endpoint?: string) {
   try {
-    await zite.failedActions.create({ record: { summary: summary.slice(0, 250), errorCode, userEmail: userEmail || undefined, details: details?.slice(0, 2000) } });
+    await zite.failedActions.create({ record: { summary: summary.slice(0, 250), errorCode, userEmail: userEmail || undefined, details: details?.slice(0, 2000), endpoint } });
   } catch (e) {
     console.error('Could not log failed action', e);
   }
+}
+
+// Already logged where they are raised (rate limits, permission denials) or not a fault (no session).
+const PRE_LOGGED = new Set(['RATE_LIMITED', 'FORBIDDEN', 'UNAUTHORIZED']);
+
+/** Wraps an endpoint's execute so any failure is recorded in Failed Actions, then re-thrown unchanged. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function withLog<P, R>(endpoint: string, run: (params: P) => R): (params: P) => Promise<Awaited<R>> {
+  const wrapped = async (params: P): Promise<Awaited<R>> => {
+    try {
+      return await run(params);
+    } catch (e) {
+      const code = e instanceof ZiteError ? String((e as unknown as { code?: string }).code ?? 'ERROR') : 'INTERNAL_ERROR';
+      if (!PRE_LOGGED.has(code)) {
+        const message = e instanceof Error ? e.message : String(e);
+        const email = (params as { context?: { user?: { email?: string } | null } })?.context?.user?.email;
+        await logFailure(`${endpoint} failed`, code, email, message, endpoint);
+      }
+      throw e;
+    }
+  };
+  return wrapped;
 }
 
 /** Fixed one-minute window per user and request kind, shared across all server instances. */

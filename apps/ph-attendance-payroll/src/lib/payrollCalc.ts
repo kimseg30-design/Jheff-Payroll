@@ -71,10 +71,11 @@ export function computePayslip(dailyRate: number, logs: DayLog[], loanDeductions
   for (const l of logs) {
     const premium = DAY_PREMIUM[l.dayType] ?? 0;
     const mult = 1 + premium;
-    if (l.status === 'Present') {
-      daysWorked += 1;
-      basic += dailyRate;
-      holiday += dailyRate * premium;
+    if (l.status === 'Present' || l.status === 'Halfday') {
+      const workFraction = l.status === 'Halfday' ? 0.5 : 1;
+      daysWorked += workFraction;
+      basic += dailyRate * workFraction;
+      holiday += dailyRate * premium * workFraction;
       // Overtime is optional: pay by calculated hours or use a manually entered fixed amount.
       ot += l.overtimePayMode === 'Fixed Amount'
         ? Math.max(0, l.overtimeAmount || 0)

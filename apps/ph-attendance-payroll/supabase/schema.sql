@@ -34,7 +34,7 @@ create table if not exists attendance (
   employee_id uuid references employees(id) on delete cascade,
   time_in text,
   time_out text,
-  status text check (status in ('Present','Absent','Paid Leave')),
+  status text check (status in ('Present','Halfday','Absent','Paid Leave')),
   day_type text check (day_type in ('Regular Day','Regular Holiday','Special Non-Working','Rest Day')),
   late_minutes numeric(8,0) default 0,
   overtime_hours numeric(6,2) default 0,
@@ -132,7 +132,7 @@ create or replace function get_dashboard()
 returns json language sql stable as $$
   select json_build_object(
     'activeEmployees', (select count(*) from employees where active),
-    'presentToday', (select count(*) from attendance where work_date = (now() at time zone 'Asia/Manila')::date and status in ('Present','Paid Leave')),
+    'presentToday', (select count(*) from attendance where work_date = (now() at time zone 'Asia/Manila')::date and status in ('Present','Halfday','Paid Leave')),
     'absentToday', (select count(*) from attendance where work_date = (now() at time zone 'Asia/Manila')::date and status = 'Absent'),
     'pendingLeaves', (select count(*) from leaves where status = 'Pending'),
     'outstandingLoans', (select coalesce(sum(balance),0) from cash_advances where status = 'Active'),
@@ -140,7 +140,7 @@ returns json language sql stable as $$
                     group by period_label, period_end order by period_end desc nulls last limit 1),
     'attendanceByDay', coalesce((select json_agg(x order by x.date) from (
         select to_char(work_date,'YYYY-MM-DD') as date,
-          count(*) filter (where status in ('Present','Paid Leave')) as present,
+          count(*) filter (where status in ('Present','Halfday','Paid Leave')) as present,
           count(*) filter (where status = 'Absent') as absent
         from attendance where work_date >= (now() at time zone 'Asia/Manila')::date - 14 group by 1) x), '[]'::json),
     'byDepartment', coalesce((select json_agg(y order by y.count desc) from (

@@ -1,6 +1,9 @@
+import { lazy } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useRole } from '../services/role';
-import DashboardPage from '../pages/DashboardPage';
+
+// Keep the chart-heavy dashboard out of the initial application bundle.
+const DashboardPage = lazy(() => import('../pages/DashboardPage'));
 
 export default function EditorHome() {
   const { role, hasModule, isLoading } = useRole();

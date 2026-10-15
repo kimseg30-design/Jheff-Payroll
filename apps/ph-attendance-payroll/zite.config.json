@@ -5,6 +5,9 @@
     "ZITE_API_KEY": {
       "description": "Supabase secret key (starts with sb_secret_…), or the legacy service_role key"
     },
+    "ZITE_SUPABASE_ANON_KEY": {
+      "description": "Supabase public (anon/publishable) key, used only by the System health check to confirm outsiders can't read your tables"
+    },
     "ZITE_SUPABASE_URL": {}
   },
   "authentication": {

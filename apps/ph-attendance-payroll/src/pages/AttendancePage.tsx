@@ -51,7 +51,7 @@ export default function AttendancePage() {
     { key: 'workDate', label: 'Work Date', type: 'date', required: true },
     { key: 'timeIn', label: 'Time In', type: 'time' },
     { key: 'timeOut', label: 'Time Out', type: 'time' },
-    { key: 'status', label: 'Status', type: 'select', options: ['Present', 'Absent', 'Paid Leave'], required: true, defaultValue: 'Present' },
+    { key: 'status', label: 'Status', type: 'select', options: ['Present', 'Halfday', 'Absent', 'Paid Leave'], required: true, defaultValue: 'Present' },
     { key: 'dayType', label: 'Day Type', type: 'select', options: ['Regular Day', 'Regular Holiday', 'Special Non-Working', 'Rest Day'], required: true, defaultValue: 'Regular Day' },
     { key: 'lateMinutes', label: 'Late Minutes (auto from 8:00 AM if blank)', type: 'number' },
     { key: 'overtimeHours', label: 'Overtime Hours (optional; used when mode is Hours)', type: 'number' },
@@ -65,7 +65,7 @@ export default function AttendancePage() {
   const filter = useCallback((r: Rec) => status === 'all' || r.status === status, [status]);
   const beforeSave = useCallback((v: Rec) => ({
     ...v,
-    lateMinutes: v.lateMinutes ?? (v.status === 'Present' ? lateFrom(v.timeIn) : 0),
+    lateMinutes: v.lateMinutes ?? (['Present', 'Halfday'].includes(v.status) ? lateFrom(v.timeIn) : 0),
     otherBenefit: v.otherBenefit == null || v.otherBenefit === '' ? 0 : Number(v.otherBenefit),
     overtimeHours: v.overtimeHours == null || v.overtimeHours === '' ? 0 : Number(v.overtimeHours),
     overtimeAmount: v.overtimeAmount == null || v.overtimeAmount === '' ? 0 : Number(v.overtimeAmount),
@@ -96,6 +96,7 @@ export default function AttendancePage() {
         <SelectContent>
           <SelectItem value="all">All statuses</SelectItem>
           <SelectItem value="Present">Present</SelectItem>
+          <SelectItem value="Halfday">Halfday</SelectItem>
           <SelectItem value="Absent">Absent</SelectItem>
           <SelectItem value="Paid Leave">Paid Leave</SelectItem>
         </SelectContent>

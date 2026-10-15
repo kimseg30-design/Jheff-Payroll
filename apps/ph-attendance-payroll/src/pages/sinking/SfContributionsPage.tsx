@@ -26,6 +26,14 @@ export default function SfContributionsPage() {
   const [bulkSaving, setBulkSaving] = useState(false);
   const rows = sf.contributions.filter((c) => member === 'all' || c.memberId === member).sort((a, b) => b.contributedOn.localeCompare(a.contributedOn));
   const total = rows.reduce((a, c) => a + Number(c.amount), 0);
+  const contributionWeeks = new Set(rows.map((c) => {
+    const sourceDate = String(c.payrollPeriodStart || c.contributedOn || '').slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(sourceDate)) return '';
+    const d = new Date(`${sourceDate}T12:00:00`);
+    const day = (d.getDay() + 6) % 7;
+    d.setDate(d.getDate() - day);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }).filter(Boolean)).size;
   const ok = v.memberId && Number(v.amount) > 0 && /^\d{4}-\d{2}-\d{2}$/.test(v.contributedOn ?? '');
   const active = sf.members.filter((m) => m.status === 'Active');
   const bulkRows: (Row & { amount: string })[] = active.map((m): Row & { amount: string } => ({ ...m, amount: bulkAmounts[m.id] ?? String(Number(m.baseContribution) || 0) }));
@@ -65,7 +73,7 @@ export default function SfContributionsPage() {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <Select value={member} onValueChange={setMember}><SelectTrigger className="w-60"><SelectValue /></SelectTrigger>
           <SelectContent><SelectItem value="all">All members</SelectItem>{sf.members.map((m) => <SelectItem key={m.id} value={m.id}>{m.fullName}</SelectItem>)}</SelectContent></Select>
-        <div className="text-sm">Total: <b className="num text-primary">{peso(total)}</b></div>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-sm"><div>Total weeks: <b className="num text-primary">{contributionWeeks}</b></div><div>Total contributions: <b className="num text-primary">{peso(total)}</b></div></div>
       </div>
       <div className="overflow-x-auto rounded-xl border bg-card shadow-sm">
         {sf.isLoading ? <div className="space-y-2 p-4">{[0, 1, 2].map((i) => <Skeleton key={i} className="h-10" />)}</div> :

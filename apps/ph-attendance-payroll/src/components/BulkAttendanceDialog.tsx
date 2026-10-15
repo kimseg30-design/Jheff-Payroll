@@ -9,7 +9,7 @@ import { DatePicker } from '@project/components/ui/date-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@project/components/ui/select';
 import { Loader2, Search } from 'lucide-react';
 import { toast } from 'sonner';
-import { bulkLogAttendance } from 'zitejs/api';
+import { bulkLogAttendance, syncDraftPayrollAttendance } from 'zitejs/api';
 import { Rec, toISODate } from '../utils/format';
 
 type Props = { open: boolean; onOpenChange: (o: boolean) => void; employees: Rec[]; lateFrom: (t?: string) => number };
@@ -28,7 +28,7 @@ export default function BulkAttendanceDialog({ open, onOpenChange, employees, la
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [search, setSearch] = useState('');
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const [status, setStatus] = useState<'Present' | 'Absent' | 'Paid Leave'>('Present');
+  const [status, setStatus] = useState<'Present' | 'Halfday' | 'Absent' | 'Paid Leave'>('Present');
   const [dayType, setDayType] = useState<'Regular Day' | 'Regular Holiday' | 'Special Non-Working' | 'Rest Day'>('Regular Day');
   const [timeIn, setTimeIn] = useState('08:00');
   const [timeOut, setTimeOut] = useState('17:00');
@@ -49,7 +49,7 @@ export default function BulkAttendanceDialog({ open, onOpenChange, employees, la
     mutationFn: () => bulkLogAttendance({
       employeeIds: [...selected], workDate: toISODate(date!), status, dayType, timeIn, timeOut, lateMinutes: lateFrom(timeIn),
     }),
-    onSuccess: (r) => { qc.invalidateQueries(); toast.success(`Logged attendance for ${r.created} employees`); onOpenChange(false); },
+    onSuccess: async (r) => { qc.invalidateQueries(); toast.success(`Logged attendance for ${r.created} employees`); onOpenChange(false); try { const workDate = toISODate(date!); const refreshed = await Promise.all([...selected].map((employeeId) => syncDraftPayrollAttendance({ employeeId, workDate }))); const updated = refreshed.reduce((sum, x) => sum + x.updated, 0); if (updated) toast.success(`Refreshed ${updated} draft payroll record${updated === 1 ? '' : 's'}`); } catch { toast.error('Attendance logged, but some draft payroll records may need refreshing.'); } },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -62,9 +62,9 @@ export default function BulkAttendanceDialog({ open, onOpenChange, employees, la
         </DialogHeader>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5"><Label className="text-xs font-semibold">Work Date</Label><DatePicker value={date} onChange={setDate} /></div>
-          <div className="space-y-1.5"><Label className="text-xs font-semibold">Status</Label><Sel value={status} onChange={(v) => setStatus(v as typeof status)} options={['Present', 'Absent', 'Paid Leave']} /></div>
+          <div className="space-y-1.5"><Label className="text-xs font-semibold">Status</Label><Sel value={status} onChange={(v) => setStatus(v as typeof status)} options={['Present', 'Halfday', 'Absent', 'Paid Leave']} /></div>
           <div className="space-y-1.5"><Label className="text-xs font-semibold">Day Type</Label><Sel value={dayType} onChange={(v) => setDayType(v as typeof dayType)} options={['Regular Day', 'Regular Holiday', 'Special Non-Working', 'Rest Day']} /></div>
-          {status === 'Present' && (
+          {['Present', 'Halfday'].includes(status) && (
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1.5"><Label className="text-xs font-semibold">Time In</Label><Input type="time" value={timeIn} onChange={(e) => setTimeIn(e.target.value)} /></div>
               <div className="space-y-1.5"><Label className="text-xs font-semibold">Time Out</Label><Input type="time" value={timeOut} onChange={(e) => setTimeOut(e.target.value)} /></div>

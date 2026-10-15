@@ -9,6 +9,8 @@ declare namespace NodeJS {
     ZITE_GITHUB_ACCESS_TOKEN: string;
     /** Supabase secret key (starts with sb_secret_…), or the legacy service_role key */
     ZITE_API_KEY: string;
+    /** Supabase public (anon/publishable) key, used only by the System health check to confirm outsiders can't read your tables */
+    ZITE_SUPABASE_ANON_KEY: string;
     ZITE_SUPABASE_URL: string;
     [key: string]: string | undefined;
   }

@@ -7,6 +7,7 @@ import type { default as _DeleteRecordEp } from '../src/api/deleteRecord';
 import type { default as _GeneratePayrollEp } from '../src/api/generatePayroll';
 import type { default as _GetDashboardEp } from '../src/api/getDashboard';
 import type { default as _GetMyRoleEp } from '../src/api/getMyRole';
+import type { default as _GetSystemHealthEp } from '../src/api/getSystemHealth';
 import type { default as _InviteUserEp } from '../src/api/inviteUser';
 import type { default as _ListInvitesEp } from '../src/api/listInvites';
 import type { default as _ListRecordsEp } from '../src/api/listRecords';
@@ -48,6 +49,11 @@ type _GetMyRoleCfg = typeof _GetMyRoleEp;
 export type GetMyRoleInputType = NonNullable<_GetMyRoleCfg['inputSchema']> extends { _input: infer I } ? I : Parameters<_GetMyRoleCfg['execute']>[0]['input'];
 export type GetMyRoleOutputType = Awaited<ReturnType<_GetMyRoleCfg['execute']>>;
 export const getMyRole = createCaller<GetMyRoleInputType, GetMyRoleOutputType>('getMyRole');
+
+type _GetSystemHealthCfg = typeof _GetSystemHealthEp;
+export type GetSystemHealthInputType = NonNullable<_GetSystemHealthCfg['inputSchema']> extends { _input: infer I } ? I : Parameters<_GetSystemHealthCfg['execute']>[0]['input'];
+export type GetSystemHealthOutputType = Awaited<ReturnType<_GetSystemHealthCfg['execute']>>;
+export const getSystemHealth = createCaller<GetSystemHealthInputType, GetSystemHealthOutputType>('getSystemHealth');
 
 type _InviteUserCfg = typeof _InviteUserEp;
 export type InviteUserInputType = NonNullable<_InviteUserCfg['inputSchema']> extends { _input: infer I } ? I : Parameters<_InviteUserCfg['execute']>[0]['input'];
@@ -136,6 +142,7 @@ export const api = {
   generatePayroll,
   getDashboard,
   getMyRole,
+  getSystemHealth,
   inviteUser,
   listInvites,
   listRecords,

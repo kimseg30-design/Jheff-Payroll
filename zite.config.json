@@ -8,5 +8,10 @@
       "type": "github",
       "connectionId": "svc_561264"
     }
+  },
+  "envVars": {
+    "ZITE_SUPABASE_ANON_KEY": {
+      "description": "Supabase public (anon/publishable) key, used only by the System health check to confirm outsiders can't read your tables"
+    }
   }
 }

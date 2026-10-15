@@ -29,7 +29,7 @@ export type LoanCalc = {
   cyclesCharged: number; monthsPrepaid: number; paidThrough: string | null;
   interestCharged: number; interestPaid: number; principalPaid: number; lateFeesPaid: number; totalCollected: number;
   principalBalance: number; accruedInterest: number; balance: number;
-  installment: number; finalInstallment: number; installments: number; schedule: string[]; nextDue: string | null; maturity: string;
+  installment: number; finalInstallment: number; installments: number; schedule: string[]; scheduleAmounts: number[]; nextDue: string | null; maturity: string;
   postMaturityCycles: number; postMaturityInterest: number; nextInterestDate: string | null;
   status: 'Unpaid' | 'Partial' | 'Fully Paid'; overdue: boolean; daysOverdue: number; overdueAmount: number; pendingLateFee: number;
   ledger: LedgerLine[];
@@ -118,6 +118,16 @@ export function calcLoan(loan: Row, allPayments: Row[], asOf = phToday()): LoanC
   const installment = Math.ceil(termTotal / installments - 1e-9);
   const finalInstallment = r2(Math.max(0, termTotal - installment * (installments - 1)));
   const paidTowardSchedule = interestPaid + principalPaid;
+  // Scale the outstanding schedule to the live balance. Any overpayment (e.g. ₱690
+  // against a ₱688 installment) reduces the remaining balance and recalculates future
+  // installments instead of leaving the original fixed amounts in the schedule.
+  const completedInstallments = Math.min(installments, Math.floor((paidTowardSchedule + 0.01) / (installment || 1)));
+  const remainingInstallments = Math.max(1, installments - completedInstallments);
+  const scaledInstallment = Math.ceil(Math.max(0, balance) / remainingInstallments - 1e-9);
+  const scheduleAmounts = schedule.map((_, i) => {
+    if (i < completedInstallments) return 0;
+    return i === installments - 1 ? r2(Math.max(0, balance - scaledInstallment * (remainingInstallments - 1))) : r2(scaledInstallment);
+  });
   const grace = Number(loan.graceDays ?? 3);
   const pastDue = schedule.filter((s) => differenceInCalendarDays(d(asOf), d(s)) > grace).length;
   const expected = pastDue >= schedule.length ? basePrincipal + interestCharged : Math.min(pastDue * installment, basePrincipal + termCycles * mi);
@@ -133,7 +143,7 @@ export function calcLoan(loan: Row, allPayments: Row[], asOf = phToday()): LoanC
     paidThrough: monthsPrepaid > 0 ? iso(addMonths(d(baseDate), monthsPrepaid)) : null,
     interestCharged, interestPaid: r2(interestPaid), principalPaid: r2(principalPaid), lateFeesPaid: r2(lateFeesPaid), totalCollected: r2(cash),
     principalBalance, accruedInterest, balance,
-    installment, finalInstallment, installments, schedule, nextDue, maturity, postMaturityCycles, postMaturityInterest: r2(postMaturityCycles * mi), nextInterestDate,
+    installment, finalInstallment, installments, schedule, scheduleAmounts, nextDue, maturity, postMaturityCycles, postMaturityInterest: r2(postMaturityCycles * mi), nextInterestDate,
     status: balance <= 0.009 ? 'Fully Paid' : payments.length ? 'Partial' : 'Unpaid',
     overdue, daysOverdue, overdueAmount, pendingLateFee, ledger,
   };

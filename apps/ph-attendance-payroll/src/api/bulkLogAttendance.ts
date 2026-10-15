@@ -4,6 +4,7 @@ import { requireTableAccess } from '../lib/roles';
 import type { AttendanceRecordInput } from 'zitejs/db';
 import { db } from '../lib/supabase';
 import { syncLeaveCredits } from '../lib/leaveCredits';
+import { withLog } from '../lib/guard';
 
 export default createEndpoint({
   authenticated: true,
@@ -11,23 +12,23 @@ export default createEndpoint({
   inputSchema: z.object({
     employeeIds: z.array(z.string().uuid()).min(1).max(100),
     workDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    status: z.enum(['Present', 'Absent', 'Paid Leave']),
+    status: z.enum(['Present', 'Halfday', 'Absent', 'Paid Leave']),
     dayType: z.enum(['Regular Day', 'Regular Holiday', 'Special Non-Working', 'Rest Day']),
     timeIn: z.string().optional(),
     timeOut: z.string().optional(),
     lateMinutes: z.number().optional(),
   }),
   outputSchema: z.object({ created: z.number() }),
-  execute: async ({ input, context }) => {
+  execute: withLog('bulkLogAttendance', async ({ input, context }) => {
     await requireTableAccess(context.user, 'attendance', 'write');
     const records = input.employeeIds.map((id) => ({
       employee: [id],
       workDate: input.workDate,
       status: input.status,
       dayType: input.dayType,
-      timeIn: input.status === 'Present' ? input.timeIn ?? null : null,
-      timeOut: input.status === 'Present' ? input.timeOut ?? null : null,
-      lateMinutes: input.status === 'Present' ? input.lateMinutes ?? 0 : 0,
+      timeIn: ['Present', 'Halfday'].includes(input.status) ? input.timeIn ?? null : null,
+      timeOut: ['Present', 'Halfday'].includes(input.status) ? input.timeOut ?? null : null,
+      lateMinutes: ['Present', 'Halfday'].includes(input.status) ? input.lateMinutes ?? 0 : 0,
       overtimeHours: 0,
       nightDiffHours: 0,
     })) as Partial<AttendanceRecordInput>[];
@@ -38,5 +39,5 @@ export default createEndpoint({
       for (const r of records) await syncLeaveCredits('attendance', undefined, r);
     }
     return { created: records.length };
-  },
+  }),
 });

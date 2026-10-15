@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { createEndpoint } from 'zitejs/backend';
 import { zite } from 'zitejs/db';
 import { requireAdmin } from '../lib/roles';
+import { withLog } from '../lib/guard';
 
 function parseRole(raw: unknown): { role: 'Admin' | 'Viewer' | 'Editor' | 'None'; permissions: ('attendance' | 'cashAdvances')[] } {
   const [base, encoded = ''] = String(raw ?? 'None').split('|', 2);
@@ -19,7 +20,7 @@ export default createEndpoint({
     role: z.enum(['Admin', 'Viewer', 'Editor', 'None']),
     permissions: z.array(z.enum(['attendance', 'cashAdvances'])),
   })) }),
-  execute: async ({ context }) => {
+  execute: withLog('listUsers', async ({ context }) => {
     await requireAdmin(context.user, 'read');
     const [users, roles] = await Promise.all([
       zite.auth.findAllUsers({ appIds: ['cfalkekpn2'], sort: [{ field: 'email', direction: 'asc' }], limit: 500 }),
@@ -32,5 +33,5 @@ export default createEndpoint({
         return { id: u.id, name: u.name || u.email, email: u.email, role: access.role, permissions: access.permissions };
       }),
     };
-  },
+  }),
 });

@@ -37,13 +37,16 @@ export default function SystemHealth() {
               <CheckRow label="Database connection" check={data.database} />
               <CheckRow label="Security lock-down" check={data.security} />
             </div>
-            <div className="mt-4 text-xs font-semibold uppercase text-muted-foreground">Last 10 failed or blocked actions</div>
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-xs font-semibold uppercase text-muted-foreground">Last 10 failed or blocked actions</div>
+              <Badge variant={data.failuresLast24h ? 'destructive' : 'secondary'}>{data.failuresLast24h} in the last 24 hours</Badge>
+            </div>
             <div className="mt-2 divide-y rounded-lg border">
               {data.failures.length === 0 && <p className="p-3 text-sm text-muted-foreground">No failed actions recorded.</p>}
               {data.failures.map((f) => (
                 <div key={f.id} className="flex flex-col gap-1 p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
-                    <div className="flex items-center gap-2"><span className="font-medium">{f.summary}</span><Badge variant="secondary">{f.errorCode}</Badge></div>
+                    <div className="flex items-center gap-2"><span className="font-medium">{f.summary}</span>{f.endpoint && <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{f.endpoint}</code>}<Badge variant="secondary">{f.errorCode}</Badge></div>
                     <div className="truncate text-xs text-muted-foreground">{f.userEmail || 'Unknown user'} · {f.details}</div>
                   </div>
                   <div className="shrink-0 text-xs text-muted-foreground">{f.occurredAt ? new Date(f.occurredAt).toLocaleString('en-PH', { timeZone: 'Asia/Manila' }) : ''}</div>

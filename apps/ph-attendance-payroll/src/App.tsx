@@ -11,6 +11,7 @@ import AppErrorBoundary from './components/AppErrorBoundary';
 
 const AttendancePage = lazy(() => import('./pages/AttendancePage'));
 const PayrollPage = lazy(() => import('./pages/PayrollPage'));
+const ReportsPage = lazy(() => import('./pages/ReportsPage'));
 const EmployeesPage = lazy(() => import('./pages/EmployeesPage'));
 const LeavesPage = lazy(() => import('./pages/LeavesPage'));
 const CashAdvancesPage = lazy(() => import('./pages/CashAdvancesPage'));
@@ -27,7 +28,16 @@ const SfContributionsPage = lazy(() => import('./pages/sinking/SfContributionsPa
 const SfAuditPage = lazy(() => import('./pages/sinking/SfAuditPage'));
 const SfSettingsPage = lazy(() => import('./pages/sinking/SfSettingsPage'));
 
-const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000, refetchOnWindowFocus: false } } });
+const queryClient = new QueryClient({ defaultOptions: { queries: {
+  staleTime: 30_000,
+  refetchOnWindowFocus: false,
+  // A rate-limited request must not be retried automatically: retries amplify bursts.
+  retry: (failureCount, error) => {
+    const message = error instanceof Error ? error.message : String(error);
+    if (/too many requests|rate limit/i.test(message)) return false;
+    return failureCount < 1;
+  },
+} } });
 
 export default function App() {
   const { user, isLoading } = useAuth();
@@ -44,6 +54,7 @@ export default function App() {
                 <Route path="/" element={<EditorHome />} />
                 <Route path="/attendance" element={<ModuleAccessGate permission="attendance"><AttendancePage /></ModuleAccessGate>} />
                 <Route path="/payroll" element={<PayrollPage />} />
+                <Route path="/reports" element={<ReportsPage />} />
                 <Route path="/employees" element={<EmployeesPage />} />
                 <Route path="/leaves" element={<LeavesPage />} />
                 <Route path="/advances" element={<ModuleAccessGate permission="cashAdvances"><CashAdvancesPage mode="cash" /></ModuleAccessGate>} />

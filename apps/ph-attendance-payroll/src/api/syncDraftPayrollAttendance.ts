@@ -3,6 +3,7 @@ import { createEndpoint } from 'zitejs/backend';
 import { requireAdmin } from '../lib/roles';
 import { db } from '../lib/supabase';
 import { computePayslip, type DayLog } from '../lib/payrollCalc';
+import { withLog } from '../lib/guard';
 
 const first = (v: unknown) => (Array.isArray(v) ? v[0] : v) as string | undefined;
 const r2 = (n: number) => Math.round(n * 100) / 100;
@@ -12,7 +13,7 @@ export default createEndpoint({
   description: 'Refreshes draft payslip earnings when an attendance record is edited',
   inputSchema: z.object({ employeeId: z.string(), workDate: z.string() }),
   outputSchema: z.object({ updated: z.number() }),
-  execute: async ({ input, context }) => {
+  execute: withLog('syncDraftPayrollAttendance', async ({ input, context }) => {
     await requireAdmin(context.user);
     const employee = await db.employees.findOne({ id: input.employeeId });
     if (!employee) return { updated: 0 };
@@ -60,5 +61,5 @@ export default createEndpoint({
       updated++;
     }
     return { updated };
-  },
+  }),
 });

@@ -9,7 +9,8 @@
 - Keep the audit trail and restrict deletion/role changes to admins.
 
 ## Rate limiting / abuse controls
-- This codebase now caps bulk attendance and payslip-release batches at 100 items and limits record payload size. These are input/resource bounds, not a substitute for request-rate limiting.
+- Every backend endpoint is rate limited per user: 60 reads and 20 writes/bulk actions per minute, counted in the Zite table "Rate Limit Buckets" (shared across all server instances). Rate-limit hits and permission denials are logged to "Failed Actions" and shown to admins under Users → System health. If the counter is unavailable, requests are allowed (fail-open) so staff are not locked out.
+- This codebase also caps bulk attendance and payslip-release batches at 100 items and limits record payload size. These are input/resource bounds, not a substitute for request-rate limiting.
 - Configure request throttling / WAF rate limits at the edge or API gateway in front of the public endpoint. Zite hosting controls are platform-managed; no app-level distributed rate-limit service is configured in this repository. Test sign-in brute-force protection and repeated endpoint calls.
 
 ## Hosting, CDN, compute, traffic

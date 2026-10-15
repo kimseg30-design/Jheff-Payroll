@@ -3,11 +3,12 @@ import { addDays, format, parseISO } from 'date-fns';
 import { createEndpoint } from 'zitejs/backend';
 import { requireMember } from '../lib/roles';
 import { request, rpc } from '../lib/supabase';
+import { withLog } from '../lib/guard';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Any = any;
 const phToday = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Manila' }).format(new Date());
-const PRESENT = ['Present', 'Paid Leave'];
+const PRESENT = ['Present', 'Halfday', 'Paid Leave'];
 
 export default createEndpoint({
   authenticated: true,
@@ -25,7 +26,7 @@ export default createEndpoint({
     attendanceByDay: z.array(z.object({ date: z.string(), present: z.number(), absent: z.number() })),
     byDepartment: z.array(z.object({ name: z.string(), count: z.number() })),
   }),
-  execute: async ({ input, context }) => {
+  execute: withLog('getDashboard', async ({ input, context }) => {
     await requireMember(context.user);
     const today = phToday();
     const date = input.date && /^\d{4}-\d{2}-\d{2}$/.test(input.date) && input.date <= today ? input.date : today;
@@ -61,5 +62,5 @@ export default createEndpoint({
       attendanceByDay: Object.entries(days).map(([k, v]) => ({ date: k, ...v })),
       byDepartment: (d.byDepartment ?? []).map((r: Any) => ({ name: String(r.name), count: Number(r.count) })),
     };
-  },
+  }),
 });

@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { createEndpoint } from 'zitejs/backend';
 import { requireAdmin } from '../lib/roles';
 import { sf } from '../lib/sf';
+import { withLog } from '../lib/guard';
 
 const TABLES = ['members', 'contributions', 'loans', 'payments', 'settings'] as const;
 const LABEL: Record<string, string> = { members: 'Member', contributions: 'Contribution', loans: 'Loan', payments: 'Payment', settings: 'Settings' };
@@ -20,7 +21,7 @@ export default createEndpoint({
   description: 'Creates or updates a Sinking Fund record and writes it to the audit log (admins only)',
   inputSchema: z.object({ table: z.enum(TABLES), id: z.string().max(100).optional(), record: z.record(z.any()).refine((value) => Object.keys(value).length <= 50 && JSON.stringify(value).length <= 50_000, { message: 'Record payload is too large.' }) }),
   outputSchema: z.object({ id: z.string() }),
-  execute: async ({ input, context }) => {
+  execute: withLog('sfSave', async ({ input, context }) => {
     await requireAdmin(context.user);
     const actor = context.user.email;
     if (input.table === 'settings') {
@@ -43,5 +44,5 @@ export default createEndpoint({
     }
     await sf.audit(action, input.table, String(created.id), details, actor);
     return { id: String(created.id) };
-  },
+  }),
 });
